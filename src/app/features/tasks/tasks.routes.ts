@@ -8,4 +8,8 @@ export const routes: Routes = [
                 (m) => m.TasksManagement,
             ),
     },
+    {
+        path: '**',
+        redirectTo: 'management',
+    },
 ];

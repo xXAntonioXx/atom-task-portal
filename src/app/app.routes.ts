@@ -14,6 +14,11 @@ export const routes: Routes = [
                     import('./features/tasks').then((m) => m.routes),
                 canActivate: [authGuard],
             },
+            {
+                path: '',
+                redirectTo: '/auth/login',
+                pathMatch: 'full',
+            },
         ],
     },
     {
@@ -23,6 +28,6 @@ export const routes: Routes = [
     },
     {
         path: '**',
-        redirectTo: 'auth',
+        redirectTo: '/auth/login',
     },
 ];
