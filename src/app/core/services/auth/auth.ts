@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Auth, signInWithCustomToken } from '@angular/fire/auth';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
+import { LoginResponse } from '../../models/login-response.interface';
 
 @Injectable({
     providedIn: 'root',
@@ -15,10 +16,21 @@ export class AuthService {
     private url = `${environment.apiUrl}/auth`;
 
     async login(email: string) {
-        const token = await firstValueFrom(
-            this.http.post<string>(`${this.url}/login`, { email }),
+        const loginResponse = await firstValueFrom(
+            this.http.post<LoginResponse>(`${this.url}/login`, { email }),
         );
-        await signInWithCustomToken(this.auth, token);
+        if (loginResponse.userExists) {
+            await signInWithCustomToken(this.auth, loginResponse.token);
+            return true;
+        }
+        return false;
+    }
+
+    async signup(email: string) {
+        const signup = await firstValueFrom(
+            this.http.post<LoginResponse>(`${this.url}/signup`, { email }),
+        );
+        await signInWithCustomToken(this.auth, signup.token);
     }
 
     async logout() {

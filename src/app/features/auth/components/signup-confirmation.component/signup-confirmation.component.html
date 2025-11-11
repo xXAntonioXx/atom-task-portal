@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>First time login</h2>
+<mat-dialog-content>
+    <p>Would you like create an account?</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button matButton (click)="onDecline()">No Thanks</button>
+    <button matButton (click)="onConfirm()" cdkFocusInitial>Ok</button>
+</mat-dialog-actions>
