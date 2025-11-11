@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { LoadingLayerService } from '../../services/loading-layer/loading-layer-service';
+import { LoadingLayerService } from '../../services/loading-layer/loading-layer.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
