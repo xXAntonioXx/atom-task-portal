@@ -11,7 +11,6 @@ import { catchError, map, mergeMap } from 'rxjs/operators';
 
 export const loadTaskEffect = createEffect(
     (actions$ = inject(Actions), taskService = inject(TasksService)) => {
-        console.log('Effect initialized');
         return actions$.pipe(
             ofType(loadTasks),
             mergeMap(() =>
