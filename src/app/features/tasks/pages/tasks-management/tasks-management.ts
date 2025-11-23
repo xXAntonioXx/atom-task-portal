@@ -1,5 +1,4 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatTableModule } from '@angular/material/table';
 import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +11,7 @@ import { select, Store } from '@ngrx/store';
 import { selectTasks } from '../../store/task-management/task-management.selector';
 import { loadTasks } from '../../store/task-management/task-management.actions';
 import { TasksService } from '../../services/tasks.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-tasks-management',
@@ -26,10 +26,10 @@ import { TasksService } from '../../services/tasks.service';
     styleUrl: './tasks-management.scss',
 })
 export class TasksManagement implements OnInit {
-    private ngbModal = inject(NgbModal);
     private store = inject(Store<{ tasks: Task[] }>);
-    private notificationService = inject(NotificationService);
-    private tasksService = inject(TasksService);
+    readonly notificationService = inject(NotificationService);
+    readonly tasksService = inject(TasksService);
+    readonly dialogService = inject(MatDialog);
 
     displayedColumns: string[] = ['completed', 'title', 'createdAt'];
     tasks$ = this.store.pipe(select(selectTasks));
@@ -39,8 +39,11 @@ export class TasksManagement implements OnInit {
     }
 
     openTaskFormModal() {
-        const modalRef = this.ngbModal.open(TaskEditModal);
-        modalRef.componentInstance.taskAction.subscribe(() => {
+        const dialogRef = this.dialogService.open(TaskEditModal, {
+            data: { title: '', description: '' },
+        });
+        dialogRef.afterClosed().subscribe((newTask) => {
+            if (!newTask) return;
             this.notificationService.showMessage('Task created successfully');
             this.store.dispatch(loadTasks());
         });
@@ -55,10 +58,15 @@ export class TasksManagement implements OnInit {
     }
 
     taskSelected(task: Task) {
-        const modalRef = this.ngbModal.open(TaskEditModal);
-        modalRef.componentInstance.setTask(task);
-        modalRef.componentInstance.taskAction.subscribe((task?: Task) => {
-            const message = task
+        const dialogRef = this.dialogService.open(TaskEditModal, {
+            data: {
+                title: task.title,
+                description: task.description,
+                id: task.id,
+            },
+        });
+        dialogRef.afterClosed().subscribe((newTask) => {
+            const message = newTask
                 ? 'Task updated successfully'
                 : 'Task deleted successfully';
             this.notificationService.showMessage(message);

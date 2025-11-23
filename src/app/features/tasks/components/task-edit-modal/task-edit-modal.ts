@@ -11,8 +11,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TasksService } from '../../services/tasks.service';
 import { Task } from '../../models/tasks.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DIALOG_DATA } from '@angular/cdk/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-task-edit-modal',
@@ -29,50 +29,37 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class TaskEditModal {
     private taskService = inject(TasksService);
     private fb = inject(FormBuilder);
-    private _snackBar = inject(MatSnackBar);
-    private ngbModal = inject(NgbModal);
+    private data = inject(DIALOG_DATA);
+    private dialogRef = inject(MatDialogRef<TaskEditModal>);
 
+    taskId: string | undefined = this.data.id;
     form: FormGroup = this.fb.group({
-        title: ['', Validators.required],
-        description: ['', Validators.required],
+        title: [this.data.title || '', Validators.required],
+        description: [this.data.description || '', Validators.required],
     });
-
-    @Input() task?: Task;
-    @Output() taskAction = new EventEmitter<Task>();
-
-    setTask(task: Task) {
-        this.task = task;
-        if (this.form) {
-            this.form.patchValue(this.task);
-        }
-    }
 
     onSubmit() {
         const task = {
             ...this.form.value,
         } as Task;
-
         let action;
-        if (this.task && this.task.id) {
+        if (this.taskId) {
             action = this.taskService.updateTask;
-            task.id = this.task.id;
+            task.id = this.taskId;
         } else {
             action = this.taskService.createTask;
         }
-
         action
             .bind(this.taskService)(task)
             .subscribe((newTask: Task) => {
-                this.taskAction.emit(newTask);
-                this.ngbModal.dismissAll();
+                this.dialogRef.close(newTask);
             });
     }
 
     onDelete() {
-        if (!this.task || !this.task.id) return;
-        this.taskService.deleteTask(this.task.id).subscribe(() => {
-            this.taskAction.emit();
-            this.ngbModal.dismissAll();
+        if (!this.taskId) return;
+        this.taskService.deleteTask(this.taskId).subscribe(() => {
+            this.dialogRef.close();
         });
     }
 }

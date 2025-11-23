@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://localhost:3000/api',
+    apiUrl: 'http://localhost:3000',
     firebase: {
         apiKey: 'AIzaSyD4po_cYMsIfltvDcbKaDIUKL6OMhiIfEg',
         authDomain: 'atom-tasks-app.firebaseapp.com',
