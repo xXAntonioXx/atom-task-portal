@@ -1,5 +1,5 @@
 export const environment = {
-    production: false,
+    production: true,
     //apiUrl: 'http://127.0.0.1:5001/atom-tasks-app/us-central1/api',
     apiUrl: 'https://us-central1-atom-tasks-app.cloudfunctions.net/api',
     firebase: {

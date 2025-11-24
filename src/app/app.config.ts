@@ -16,6 +16,7 @@ import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { loadTaskEffect } from './features/tasks/store/task-management/task-management.effects';
 import { loadingLayerInterceptor } from './core/interceptors/loading-layer/loading-layer-interceptor';
+import { logOutMetaReducers } from './core/store/log-out/log-out.reducer';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -27,7 +28,10 @@ export const appConfig: ApplicationConfig = {
         ),
         provideFirebaseApp(() => initializeApp(environment.firebase)),
         provideAuth(() => getAuth()),
-        provideStore({ tasks: taskManagementReducer }),
+        provideStore(
+            { tasks: taskManagementReducer },
+            { metaReducers: logOutMetaReducers },
+        ),
         provideEffects({ loadTaskEffect }),
         provideStoreDevtools(),
     ],
